@@ -7,6 +7,7 @@ import com.xpto.distancelearning.course.service.LessonService;
 import com.xpto.distancelearning.course.service.ModuleService;
 import com.xpto.distancelearning.course.specifications.SpecificationTemplate;
 import jakarta.validation.Valid;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Log4j2
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class LessonController {
