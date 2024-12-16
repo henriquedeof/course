@@ -1,9 +1,11 @@
 package com.xpto.distancelearning.course.service.impl;
 
 import com.xpto.distancelearning.course.models.CourseModel;
+import com.xpto.distancelearning.course.models.CourseUserModel;
 import com.xpto.distancelearning.course.models.LessonModel;
 import com.xpto.distancelearning.course.models.ModuleModel;
 import com.xpto.distancelearning.course.repositories.CourseRepository;
+import com.xpto.distancelearning.course.repositories.CourseUserRepository;
 import com.xpto.distancelearning.course.repositories.LessonRepository;
 import com.xpto.distancelearning.course.repositories.ModuleRepository;
 import com.xpto.distancelearning.course.service.CourseService;
@@ -31,6 +33,9 @@ public class CourseServiceImpl implements CourseService {
     @Autowired
     private LessonRepository lessonRepository;
 
+    @Autowired
+    private CourseUserRepository courseUserRepository;
+
     @Transactional
     @Override
     public void delete(CourseModel courseModel) {
@@ -44,6 +49,12 @@ public class CourseServiceImpl implements CourseService {
             }
             moduleRepository.deleteAll(moduleModelList);
         }
+
+        List<CourseUserModel> courseUserModelList = courseUserRepository.findAllCourseUserIntoCourse(courseModel.getCourseId());
+        if(!courseUserModelList.isEmpty()){
+            courseUserRepository.deleteAll(courseUserModelList);
+        }
+
         courseRepository.delete(courseModel);
     }
 

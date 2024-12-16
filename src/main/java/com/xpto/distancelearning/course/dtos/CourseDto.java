@@ -11,7 +11,7 @@ import java.util.UUID;
 @Data
 public class CourseDto {
 
-    // Because I am NOT using 'groups' in the NotBlank validation, I needed to use the @Valid annotation in the controller.
+    // Because I am NOT using 'groups' (see UserDto) in the NotBlank validation, I needed to use the @Valid annotation in the controller.
     @NotBlank
     private String name;
 

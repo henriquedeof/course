@@ -2,9 +2,11 @@ package com.xpto.distancelearning.course.specifications;
 
 
 import com.xpto.distancelearning.course.models.CourseModel;
+import com.xpto.distancelearning.course.models.CourseUserModel;
 import com.xpto.distancelearning.course.models.LessonModel;
 import com.xpto.distancelearning.course.models.ModuleModel;
 import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Root;
 import net.kaczmarzyk.spring.data.jpa.domain.Equal;
 import net.kaczmarzyk.spring.data.jpa.domain.Like;
@@ -61,6 +63,14 @@ public class SpecificationTemplate {
                     criteriaBuilder.equal(module.get("moduleId"), moduleId),
                     criteriaBuilder.isMember(lesson, moduleLessons)
             );
+        };
+    }
+
+    public static Specification<CourseModel> courseUserId(final UUID userId) {
+        return (root, query, cb) -> {
+            query.distinct(true);
+            Join<CourseModel, CourseUserModel> courseProd = root.join("coursesUsers");
+            return cb.equal(courseProd.get("userId"), userId);
         };
     }
 }
