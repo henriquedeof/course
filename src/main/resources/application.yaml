@@ -2,6 +2,8 @@ server:
     port: 8082
 
 spring:
+    application:
+        name: dl-course-service
     datasource:
         url: jdbc:postgresql://localhost:5432/dl-course
         username: postgres
@@ -28,4 +30,12 @@ logging:
 distance-learning:
     api:
         url:
-            authuser: 'http://localhost:8087'
+#            authuser: 'http://localhost:8087'# I do not to hardcode the URL anymore and instead use the service name defined in the Eureka.
+            authuser: 'http://dl-authuser-service'
+
+eureka:
+    client:
+        service-url:
+            defaultZone: 'http://localhost:8761/eureka'
+    instance:
+        hostname: localhost
