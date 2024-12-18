@@ -18,7 +18,6 @@ public class CourseUserServiceImpl implements CourseUserService {
     private CourseUserRepository courseUserRepository;
 
     @Autowired
-//    private AuthUserClient authUserClient;
     private AuthUserClient authUserClient;
 
     @Override
@@ -37,5 +36,16 @@ public class CourseUserServiceImpl implements CourseUserService {
         courseUserModel = courseUserRepository.save(courseUserModel);
         authUserClient.postSubscriptionUserInCourse(courseUserModel.getCourse().getCourseId(), courseUserModel.getUserId());
         return courseUserModel;
+    }
+
+    @Override
+    public boolean existsByUserId(UUID userId) {
+        return courseUserRepository.existsByUserId(userId);
+    }
+
+    @Transactional
+    @Override
+    public void deleteCourseUserByUser(UUID userId) {
+        courseUserRepository.deleteAllByUserId(userId);
     }
 }
