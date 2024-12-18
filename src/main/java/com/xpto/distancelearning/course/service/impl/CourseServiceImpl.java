@@ -1,5 +1,6 @@
 package com.xpto.distancelearning.course.service.impl;
 
+import com.xpto.distancelearning.course.clients.AuthUserClient;
 import com.xpto.distancelearning.course.models.CourseModel;
 import com.xpto.distancelearning.course.models.CourseUserModel;
 import com.xpto.distancelearning.course.models.LessonModel;
@@ -36,9 +37,13 @@ public class CourseServiceImpl implements CourseService {
     @Autowired
     private CourseUserRepository courseUserRepository;
 
+    @Autowired
+    private AuthUserClient authUserClient;
+
     @Transactional
     @Override
     public void delete(CourseModel courseModel) {
+        boolean deleteCourseUserInAuthUser = false;
         List<ModuleModel> moduleModelList = moduleRepository.findAllModulesIntoCourse(courseModel.getCourseId());
         if (!CollectionUtils.isEmpty(moduleModelList)) {
             for (ModuleModel moduleModel : moduleModelList) {
@@ -53,9 +58,13 @@ public class CourseServiceImpl implements CourseService {
         List<CourseUserModel> courseUserModelList = courseUserRepository.findAllCourseUserIntoCourse(courseModel.getCourseId());
         if(!courseUserModelList.isEmpty()){
             courseUserRepository.deleteAll(courseUserModelList);
+            deleteCourseUserInAuthUser = true;
         }
 
         courseRepository.delete(courseModel);
+        if (deleteCourseUserInAuthUser) {
+            authUserClient.deleteCourseInAuthUser(courseModel.getCourseId());
+        }
     }
 
     @Override
