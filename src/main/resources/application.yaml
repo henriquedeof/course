@@ -7,7 +7,7 @@ spring:
     application:
         name: dl-course-service
     datasource:
-        url: jdbc:postgresql://localhost:5432/dl-course
+        url: jdbc:postgresql://localhost:5432/dl-course-v2
         username: postgres
         password: root
     jpa:
@@ -21,6 +21,8 @@ spring:
 #            hibernate:
 #                format_sql: true
 #                show_sql: true
+    rabbitmq:
+        addresses: amqps://dsvvfanu:4FhHf07AACm8Gv1-SoWH337wGN6zGi1P@possum.lmq.cloudamqp.com/dsvvfanu
 
 logging:
     level:
@@ -29,11 +31,17 @@ logging:
         org.springframework.web: DEBUG
         org.hibernate: INFO
 
-distance-learning:
+dl:
     api:
         url:
 #            authuser: 'http://localhost:8087'# I do not to hardcode the URL anymore and instead use the service name defined in the Eureka.
             authuser: 'http://dl-authuser-service/dl-authuser'
+    broker:
+        exchange:
+            userEventExchange: 'dl-userevent'
+        queue:
+            userEventQueue:
+                name: 'dl.userevent.ms.course'
 
 eureka:
     client:
