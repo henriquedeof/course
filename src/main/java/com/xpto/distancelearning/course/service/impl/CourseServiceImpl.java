@@ -1,14 +1,12 @@
 package com.xpto.distancelearning.course.service.impl;
 
-import com.xpto.distancelearning.course.clients.AuthUserClient;
 import com.xpto.distancelearning.course.models.CourseModel;
-import com.xpto.distancelearning.course.models.CourseUserModel;
 import com.xpto.distancelearning.course.models.LessonModel;
 import com.xpto.distancelearning.course.models.ModuleModel;
 import com.xpto.distancelearning.course.repositories.CourseRepository;
-import com.xpto.distancelearning.course.repositories.CourseUserRepository;
 import com.xpto.distancelearning.course.repositories.LessonRepository;
 import com.xpto.distancelearning.course.repositories.ModuleRepository;
+import com.xpto.distancelearning.course.repositories.UserRepository;
 import com.xpto.distancelearning.course.service.CourseService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,15 +33,14 @@ public class CourseServiceImpl implements CourseService {
     private LessonRepository lessonRepository;
 
     @Autowired
-    private CourseUserRepository courseUserRepository;
+    private UserRepository userRepository;
 
-    @Autowired
-    private AuthUserClient authUserClient;
+//    @Autowired
+//    private AuthUserClient authUserClient;
 
     @Transactional
     @Override
     public void delete(CourseModel courseModel) {
-        boolean deleteCourseUserInAuthUser = false;
         List<ModuleModel> moduleModelList = moduleRepository.findAllModulesIntoCourse(courseModel.getCourseId());
         if (!CollectionUtils.isEmpty(moduleModelList)) {
             for (ModuleModel moduleModel : moduleModelList) {
@@ -54,17 +51,19 @@ public class CourseServiceImpl implements CourseService {
             }
             moduleRepository.deleteAll(moduleModelList);
         }
-
-        List<CourseUserModel> courseUserModelList = courseUserRepository.findAllCourseUserIntoCourse(courseModel.getCourseId());
-        if(!courseUserModelList.isEmpty()){
-            courseUserRepository.deleteAll(courseUserModelList);
-            deleteCourseUserInAuthUser = true;
-        }
-
+        courseRepository.deleteCourseUserByCourse(courseModel.getCourseId());
         courseRepository.delete(courseModel);
-        if (deleteCourseUserInAuthUser) {
-            authUserClient.deleteCourseInAuthUser(courseModel.getCourseId());
-        }
+
+//        NOTE: Code commented as the communication is now asynchronous
+//        List<UserModel> userModelList = userRepository.findAllCourseUserIntoCourse(courseModel.getCourseId());
+//        if(!userModelList.isEmpty()){
+//            userRepository.deleteAll(userModelList);
+//            deleteCourseUserInAuthUser = true;
+//        }
+//
+//        if (deleteCourseUserInAuthUser) {
+//            authUserClient.deleteCourseInAuthUser(courseModel.getCourseId());
+//        }
     }
 
     @Override
@@ -81,5 +80,16 @@ public class CourseServiceImpl implements CourseService {
     //public Page<CourseModel> findAll(SpecificationTemplate.CourseSpec spec, Pageable pageable) {
     public Page<CourseModel> findAll(Specification<CourseModel> spec, Pageable pageable) {
         return courseRepository.findAll(spec, pageable);
+    }
+
+    @Override
+    public boolean existsByCourseAndUser(UUID courseId, UUID userId) {
+        return courseRepository.existsByCourseAndUser(courseId, userId);
+    }
+
+    @Transactional
+    @Override
+    public void saveSubscriptionUserInCourse(UUID courseId, UUID userId) {
+        courseRepository.saveCourseUser(courseId, userId);
     }
 }

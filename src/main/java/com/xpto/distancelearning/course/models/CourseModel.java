@@ -9,8 +9,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -80,16 +78,31 @@ public class CourseModel implements Serializable {
     //@OnDelete(action = OnDeleteAction.CASCADE) // Delegate the deletion of the modules to the database. This way, the database will delete the modules when the course is deleted.
     private Set<ModuleModel> modules;
 
-    /*
-     * JsonProperty.Access.WRITE_ONLY: The property will only be used during deserialization (reading JSON into Java object).
-     * JsonProperty.Access.READ_ONLY: The property will only be used during serialization (writing Java object to JSON).
-     * JsonProperty.Access.READ_WRITE: The property will be used for both serialization and deserialization (default behavior).
-     */
+    // This is a many-to-many relationship between the Course and the User
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
-    private Set<CourseUserModel> coursesUsers;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "TB_COURSES_USERS",
+            joinColumns = @JoinColumn(name = "course_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
+    private Set<UserModel> users;
 
-    public CourseUserModel convertToCourseUserModel(UUID userID){
-        return new CourseUserModel(null, userID, this);
-    }
+
+
+
+//======================================================================================================================
+//    NOTE: Fields deleted as the communication is now asynchronous
+//======================================================================================================================
+
+//    /*
+//     * JsonProperty.Access.WRITE_ONLY: The property will only be used during deserialization (reading JSON into Java object).
+//     * JsonProperty.Access.READ_ONLY: The property will only be used during serialization (writing Java object to JSON).
+//     * JsonProperty.Access.READ_WRITE: The property will be used for both serialization and deserialization (default behavior).
+//     */
+//    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+//    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
+//    private Set<UserModel> coursesUsers;
+//
+//    public UserModel convertToCourseUserModel(UUID userID){
+//        return new UserModel(null, userID, this);
+//    }
 }
