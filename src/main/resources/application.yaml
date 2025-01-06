@@ -35,6 +35,7 @@ dl:
     api:
         url:
 #            authuser: 'http://localhost:8087'# I do not to hardcode the URL anymore and instead use the service name defined in the Eureka.
+#            'dl-authuser-service' is the name of the service defined in spring.application.name in the application.yaml file of the dl-authuser-service.
             authuser: 'http://dl-authuser-service/dl-authuser'
     broker:
         exchange:
