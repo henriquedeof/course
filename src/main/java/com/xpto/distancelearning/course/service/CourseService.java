@@ -1,6 +1,7 @@
 package com.xpto.distancelearning.course.service;
 
 import com.xpto.distancelearning.course.models.CourseModel;
+import com.xpto.distancelearning.course.models.UserModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -21,4 +22,6 @@ public interface CourseService {
     boolean existsByCourseAndUser(UUID courseId, UUID userId);
 
     void saveSubscriptionUserInCourse(UUID courseId, UUID userId);
+
+    void saveSubscriptionUserInCourseAndSendNotification(CourseModel course, UserModel user);
 }
