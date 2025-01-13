@@ -2,86 +2,89 @@
 # The configurations below are used to connect to the Config Server (dl-config-server) and get the configurations from the dl-config-server-repo.
 # The configurations are stored in the dl-config-server-repo in the dl-notification-service.properties file.
 # ================================================================================================================================
-#spring:
-#    application:
-#        name: dl-course-service
-#    config:
-#        # The 'configserver:' is used to tell the application to look for the configurations in the Config Server.
-#        # The 'optional' prefix is used to tell the application that if the Config Server is not available, it should use the configurations in this application.yaml file (need to uncomment them).
-#        # import:  'optional:configserver:'
-#        import:  'configserver:'
-#    cloud:
-#        config:
-#            discovery:
-#                # The serviceId is the name of the service in the Eureka Server.
-#                serviceId: dl-config-server
-
-
-# ================================================================================================================================
-# All configurations below are commented as I am using the configs from the dl-config-server-repo (Global Config Pattern).
-# These were the initial configurations before I started using the dl-config-server-repo.
-# ================================================================================================================================
-server:
-    port: 8082
-    servlet:
-        context-path: '/dl-course/' # This is the context path for the service. Used in conjunction with the API Gateway that has it mapped in the routes.
-
 spring:
     application:
         name: dl-course-service
     config:
         # The 'configserver:' is used to tell the application to look for the configurations in the Config Server.
         # The 'optional' prefix is used to tell the application that if the Config Server is not available, it should use the configurations in this application.yaml file (need to uncomment them).
-        import:  'optional:configserver:'
+        # import:  'optional:configserver:'
+        import:  'configserver:'
     cloud:
         config:
             discovery:
                 # The serviceId is the name of the service in the Eureka Server.
                 serviceId: dl-config-server
-    datasource:
-        url: jdbc:postgresql://localhost:5432/dl-course-v2
-        username: postgres
-        password: root
-    jpa:
-        hibernate:
-            ddl-auto: update
-            dialect: org.hibernate.dialect.PostgreSQLDialect
-            jdbc:
-                lob.non_contextual_creation: true
-#        show-sql: true
-#        properties:
-#            hibernate:
-#                format_sql: true
-#                show_sql: true
-    rabbitmq:
-        addresses: amqps://dsvvfanu:4FhHf07AACm8Gv1-SoWH337wGN6zGi1P@possum.lmq.cloudamqp.com/dsvvfanu
+            # The username and password are used to access the Config Server (basic authentication) as it is now using Spring Security.
+            username: admin
+            password: 'admin'
 
-logging:
-    level:
-        com.xpto.distancelearning: TRACE
-        root: INFO
-        org.springframework.web: DEBUG
-        org.hibernate: INFO
 
-dl:
-    api:
-        url:
-#            authuser: 'http://localhost:8087'# I do not to hardcode the URL anymore and instead use the service name defined in the Eureka.
-#            'dl-authuser-service' is the name of the service defined in spring.application.name in the application.yaml file of the dl-authuser-service.
-            authuser: 'http://dl-authuser-service/dl-authuser'
-    broker:
-        exchange:
-            userEventExchange: 'dl-userevent'
-            notificationCommandExchange: dl.notificationcommand
-        queue:
-            userEventQueue:
-                name: 'dl.userevent.ms.course'
-        key:
-            notificationCommandKey: ms.notification
-
-eureka:
-    client:
-        service-url:
-            defaultZone: 'http://localhost:8761/eureka'
-    instance:
-        hostname: localhost
+# ================================================================================================================================
+# All configurations below are commented as I am using the configs from the dl-config-server-repo (Global Config Pattern).
+# These were the initial configurations before I started using the dl-config-server-repo.
+# ================================================================================================================================
+#server:
+#    port: 8082
+#    servlet:
+#        context-path: '/dl-course/' # This is the context path for the service. Used in conjunction with the API Gateway that has it mapped in the routes.
+#
+#spring:
+#    application:
+#        name: dl-course-service
+#    config:
+#        # The 'configserver:' is used to tell the application to look for the configurations in the Config Server.
+#        # The 'optional' prefix is used to tell the application that if the Config Server is not available, it should use the configurations in this application.yaml file (need to uncomment them).
+#        import:  'optional:configserver:'
+#    cloud:
+#        config:
+#            discovery:
+#                # The serviceId is the name of the service in the Eureka Server.
+#                serviceId: dl-config-server
+#    datasource:
+#        url: jdbc:postgresql://localhost:5432/dl-course-v2
+#        username: postgres
+#        password: root
+#    jpa:
+#        hibernate:
+#            ddl-auto: update
+#            dialect: org.hibernate.dialect.PostgreSQLDialect
+#            jdbc:
+#                lob.non_contextual_creation: true
+##        show-sql: true
+##        properties:
+##            hibernate:
+##                format_sql: true
+##                show_sql: true
+#    rabbitmq:
+#        addresses: amqps://dsvvfanu:4FhHf07AACm8Gv1-SoWH337wGN6zGi1P@possum.lmq.cloudamqp.com/dsvvfanu
+#
+#logging:
+#    level:
+#        com.xpto.distancelearning: TRACE
+#        root: INFO
+#        org.springframework.web: DEBUG
+#        org.hibernate: INFO
+#
+#dl:
+#    api:
+#        url:
+##            authuser: 'http://localhost:8087'# I do not to hardcode the URL anymore and instead use the service name defined in the Eureka.
+##            'dl-authuser-service' is the name of the service defined in spring.application.name in the application.yaml file of the dl-authuser-service.
+#            authuser: 'http://dl-authuser-service/dl-authuser'
+#    broker:
+#        exchange:
+#            userEventExchange: 'dl-userevent'
+#            notificationCommandExchange: dl.notificationcommand
+#        queue:
+#            userEventQueue:
+#                name: 'dl.userevent.ms.course'
+#        key:
+#            notificationCommandKey: ms.notification
+#
+#eureka:
+#    client:
+#        service-url:
+#            defaultZone: 'http://localhost:8761/eureka'
+#    instance:
+#        hostname: localhost
