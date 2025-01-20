@@ -15,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,6 +39,7 @@ public class CourseController {
     // NOTE 1: Because I am NOT using 'groups' in the CourseDto annotations (@NotBlank, @NotNull, etc.), I need to use the @Valid (NOT @Validated) annotation in the controller.
         // See UserDto that uses Validation Groups or 'groups'
     // NOTE 2: Using the CourseValidator for validations. All the field annotations of the CourseDto (e.g. @NotBlank, @NotNull, etc.) are validated in the CourseValidator class
+    @PreAuthorize("hasAnyRole('INSTRUCTOR')")
     @PostMapping
     // public ResponseEntity<Object> saveCourse(@RequestBody @Valid CourseDto courseDto) { // This was the original line. See NOTE 1.
     public ResponseEntity<Object> saveCourse(@RequestBody CourseDto courseDto, Errors errors) { // This is the new line, where I removed the @Valid annotation to use the 'CourseValidator' custom validation. See NOTE 2.
@@ -54,6 +56,7 @@ public class CourseController {
         return ResponseEntity.status(HttpStatus.CREATED).body(courseService.save(courseModel));
     }
 
+    @PreAuthorize("hasAnyRole('INSTRUCTOR')")
     @DeleteMapping("/{courseId}")
     public ResponseEntity<Object> deleteCourse(@PathVariable(value = "courseId") UUID courseId) {
         Optional<CourseModel> courseModelOptional = courseService.findById(courseId);
@@ -67,6 +70,7 @@ public class CourseController {
     }
 
     // Because I am NOT using 'groups' in the CourseDto annotations (@NotBlank, @NotNull, etc.), I need to use the @Valid (NOT @Validated) annotation in the controller.
+    @PreAuthorize("hasAnyRole('INSTRUCTOR')")
     @PutMapping("/{courseId}")
     public ResponseEntity<Object> updateCourse(@PathVariable(value = "courseId") UUID courseId, @RequestBody @Valid CourseDto courseDto) {
         Optional<CourseModel> courseModelOptional = courseService.findById(courseId);
@@ -105,6 +109,7 @@ public class CourseController {
 //    public ResponseEntity<Page<CourseModel>> getAllCourses(SpecificationTemplate.CourseSpec spec, @PageableDefault(page = 0, size = 10, sort = "courseId", direction = Sort.Direction.ASC) Pageable pageable) {
 //        return ResponseEntity.ok(courseService.findAll(spec, pageable));
 //    }
+@PreAuthorize("hasAnyRole('STUDENT')")
     @GetMapping
     public ResponseEntity<Page<CourseModel>> getAllCourses(SpecificationTemplate.CourseSpec spec,
                                                            @PageableDefault(page = 0, size = 10, sort = "courseId", direction = Sort.Direction.ASC) Pageable pageable,
@@ -126,6 +131,7 @@ public class CourseController {
 //        }
     }
 
+    @PreAuthorize("hasAnyRole('STUDENT')")
     @GetMapping("/{courseId}")
     public ResponseEntity<Object> getOneCourse(@PathVariable(value = "courseId") UUID courseId) {
         Optional<CourseModel> courseModelOptional = courseService.findById(courseId);
