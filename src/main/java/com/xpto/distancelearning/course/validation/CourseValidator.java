@@ -1,11 +1,13 @@
 package com.xpto.distancelearning.course.validation;
 
+import com.xpto.distancelearning.course.configs.security.AuthenticationCurrentUserService;
 import com.xpto.distancelearning.course.dtos.CourseDto;
 import com.xpto.distancelearning.course.enums.UserType;
 import com.xpto.distancelearning.course.models.UserModel;
 import com.xpto.distancelearning.course.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -26,6 +28,9 @@ public class CourseValidator implements Validator { // I need to implement the m
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private AuthenticationCurrentUserService authenticationCurrentUserService;
+
 //    @Autowired
 //    private AuthUserClient authUserClient;
 
@@ -44,12 +49,18 @@ public class CourseValidator implements Validator { // I need to implement the m
     }
 
     private void validateUserInstructor(UUID userInstructor, Errors errors) {
-        Optional<UserModel> userModelOptional = userService.findById(userInstructor);
-        if(!userModelOptional.isPresent()) {
-            errors.rejectValue("userInstructor", "UserInstructorError", "Instructor not found.");
-        }
-        if(userModelOptional.get().getUserType().equals(UserType.STUDENT.toString())){
-            errors.rejectValue("userInstructor", "UserInstructorError", "User must be INSTRUCTOR or ADMIN.");
+        UUID currentUserId = authenticationCurrentUserService.getCurrentUser().getUserId();
+        // Check if the user is the same as the instructor of the course as the user can only create a course with himself as the instructor.
+        if (currentUserId.equals(userInstructor)) {
+            Optional<UserModel> userModelOptional = userService.findById(userInstructor);
+            if(!userModelOptional.isPresent()) {
+                errors.rejectValue("userInstructor", "UserInstructorError", "Instructor not found.");
+            }
+            if(userModelOptional.get().getUserType().equals(UserType.STUDENT.toString())){
+                errors.rejectValue("userInstructor", "UserInstructorError", "User must be INSTRUCTOR or ADMIN.");
+            } else {
+                throw new AccessDeniedException("Forbidden");
+            }
         }
 
 //        ResponseEntity<UserDto> responseUserInstructor;
