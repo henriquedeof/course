@@ -3,19 +3,15 @@
 # The configurations are stored in the dl-config-server-repo in the dl-notification-service.properties file.
 # ================================================================================================================================
 spring:
-    profiles:
-        active: prod
-    application:
-        name: dl-course-service
+    config:
+        # The 'configserver:' is used to tell the application to look for the configurations in the Config Server.
+        # The 'optional' prefix is used to tell the application that if the Config Server is not available, it should use the configurations in this application.yaml file (need to uncomment them).
+        # import:  'optional:configserver:'
+        import:  'configserver:${CONFIG_SERVER_URL}'
 
 # ================================================================================================================================
-# The configurations below are commented as they were moved to the application-dev.yaml file.
+# The configurations below are commented as they are now set in the Heroku environment variables (CONFIG_SERVER_URL).
 # ================================================================================================================================
-#    config:
-#        # The 'configserver:' is used to tell the application to look for the configurations in the Config Server.
-#        # The 'optional' prefix is used to tell the application that if the Config Server is not available, it should use the configurations in this application.yaml file (need to uncomment them).
-#        # import:  'optional:configserver:'
-#        import:  'configserver:'
 #    cloud:
 #        config:
 #            discovery:
