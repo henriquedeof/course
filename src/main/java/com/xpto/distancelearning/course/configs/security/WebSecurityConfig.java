@@ -64,11 +64,18 @@ public class WebSecurityConfig { // henrique: Maybe the class name should be Sec
         return http.build();
     }
 
+    // ====================================================================================================================
     // This is my implementation of the authenticationManagerBean method. I am not extending the WebSecurityConfigurerAdapter class.
     @Bean
     public AuthenticationManager authenticationManagerBean(HttpSecurity http) throws Exception {
         return http.getSharedObject(AuthenticationManagerBuilder.class).build();
     }
+//    // The method below is the implementation suggested by Michelli Brito, during the course.
+//    @Bean
+//    public AuthenticationManager authenticationManagerBean(AuthenticationConfiguration auth) throws Exception {
+//        return auth.getAuthenticationManager();
+//    }
+    // ====================================================================================================================
 
 //    This method is using the InMemoryUserDetailsManager class to create a user with the username "admin" and password "123456.
 //    However, this is not the best way to create a user. The best way is to use the UserDetailsServiceImpl class to create a user.
