@@ -56,7 +56,7 @@ public class CourseValidator implements Validator { // I need to implement the m
             if(!userModelOptional.isPresent()) {
                 errors.rejectValue("userInstructor", "UserInstructorError", "Instructor not found.");
             }
-            if(userModelOptional.get().getUserType().equals(UserType.STUDENT.toString())){
+            if(userModelOptional.get().getUserType().equals(UserType.STUDENT.toString()) || userModelOptional.get().getUserType().equals(UserType.USER.toString())){
                 errors.rejectValue("userInstructor", "UserInstructorError", "User must be INSTRUCTOR or ADMIN.");
             } else {
                 throw new AccessDeniedException("Forbidden");
